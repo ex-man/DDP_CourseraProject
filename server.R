@@ -19,8 +19,8 @@ shinyServer(function(input, output) {
     # Depending on input$input_type, we'll generate a different
     # UI component and send it to the client.
     sliderInput('mu', 'Mean',
-                min=my_mean()-my_sd(),
-                max=my_mean()+my_sd(),
+                min=round(my_mean()-my_sd(),0),
+                max=round(my_mean()+my_sd(),),
                 value=my_mean(), step=1, round=0)
   })
   #dynamic UI 2
@@ -32,8 +32,8 @@ shinyServer(function(input, output) {
     # UI component and send it to the client.
     
    sliderInput('sd', 'Standard Deviation',
-                       min=my_sd()/2,
-                       max=my_sd()*2,
+                       min=round(my_sd()/2,0),
+                       max=round(my_sd()*2,0),
                        value=my_sd(), step=1, round=0)
 
   })
@@ -42,7 +42,11 @@ shinyServer(function(input, output) {
     
     data<-dataset[,input$x]
     
-    p <- hist(data)
+    p <- hist(data
+              , prob=TRUE
+              , main=paste('Fitting normal distribution to', input$x)
+              , xlab=input$x
+              )
     my_x<-seq(min(data),max(data),1)
     lines(dnorm(my_x,mean=input$mu,sd=input$sd),col="red")
     
@@ -54,7 +58,11 @@ shinyServer(function(input, output) {
     
     data<-dataset[,input$x]
     
-    p <- plot(ecdf(data))
+    p <- plot(ecdf(data)
+              , main=paste('Distribution function vs. ECDF of', input$x)
+              , xlab=input$x
+              , ylab='Probability'
+              )
     my_x<-seq(min(data),max(data),1)
     lines(pnorm(my_x,mean=input$mu,sd=input$sd),col="red")
     
